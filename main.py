@@ -1,13 +1,16 @@
 import whisper
 import ollama
+import sounddevice as sd
 from ollama import chat, ChatResponse, generate
 
-# Config whisper
+# Config
 model = whisper.load_model("base")
+recordtime = 30 #sec
+
 
 def DecodeAudio(): # แปล Speak to text
     # load audio and pad/trim it to fit 30 seconds
-    audio = whisper.load_audio("audio.mp3")
+    audio = whisper.load_audio("narration(1).mp3") # หามาใส่เด้อหล่า
     audio = whisper.pad_or_trim(audio)
 
     # make log-Mel spectrogram and move to the same device as the model
@@ -22,12 +25,16 @@ def DecodeAudio(): # แปล Speak to text
     result = whisper.decode(model, mel, options)
 
     # print the recognized text
+    print(result.text)
     return(result.text)
+
+result = DecodeAudio() # Return ^
 
 def main(): #process text
     stream = chat(
     model='qwen2.5:0.5b',
-    messages=[{'role': 'user', 'content': 'Why is the sky blue?'}],
+    messages=[{'role': 'user', 'content': result}],
+    # messages=[{'role': 'user', 'content': "Where do you keep the chat logs?"}],
     stream=True,
     )
 
@@ -36,4 +43,4 @@ def main(): #process text
 
 if __name__ == "__main__":
     DecodeAudio()
-    # main()
+    main()
