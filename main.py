@@ -3,10 +3,9 @@ import ollama
 import sounddevice as sd
 from ollama import chat, ChatResponse, generate
 import record #record.py
+
 # Config
 model = whisper.load_model("small")
-recordtime = 30 #sec
-
 
 def DecodeAudio(audio_file): # แปล Speak to text
     # load audio and pad/trim it to fit 30 seconds
@@ -29,15 +28,15 @@ def DecodeAudio(audio_file): # แปล Speak to text
     return(result.text)
 
 def main(result_text): #process text
-    # stream = chat(
-    # model='qwen2.5:0.5b',
-    # messages=[{'role': 'user', 'content': result_text}],
-    # stream=True,
-    # )
+    stream = chat(
+    model='tinyllama:latest',
+    messages=[{'role': 'user', 'content': result_text}],
+    stream=True,
+    )
 
-    # for chunk in stream:
-    #     print(chunk['message']['content'], end='', flush=True)
-    pass
+    for chunk in stream:
+        print(chunk['message']['content'], end='', flush=True)
+    # pass 
 
 
 if __name__ == "__main__":
